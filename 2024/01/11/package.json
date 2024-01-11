@@ -1,0 +1,35 @@
+{
+  "name": "headless-browser",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lighthouse": "^9.6.8",
+    "puppeteer": "^21.5.2",
+    "url": "^0.11.3"
+  },
+  "jscpd": {
+    "threshold": 60,
+    "reporters": [
+      "html"
+    ],
+    "ignore": [
+      ".git",
+      "node_modules",
+      "public",
+      ".husky"
+    ],
+    "format": [
+      "javascript",
+      "css",
+      "scss"
+    ],
+    "absolute": true
+  }
+}
