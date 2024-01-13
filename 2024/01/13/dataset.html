@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dataset</title>
+</head>
+
+<body>
+    <div id="user" data-id="123456"></div>
+
+    <script>
+        window.onload = () => {
+            const userEle = document.getElementById('user')
+            if (userEle) {
+                userEle.innerText = `元素的data-id是${userEle.dataset.id}`
+
+                userEle.dataset.id = 7890
+                let timeId = setTimeout(() => {
+                    userEle.innerText = `元素的data-id是${userEle.dataset.id}`
+                    clearTimeout(timeId)
+                }, 1000)
+            }
+        }
+    </script>
+</body>
+
+</html>

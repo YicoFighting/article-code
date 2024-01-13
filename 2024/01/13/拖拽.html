@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>元素拖拽与元素移动</title>
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top {
+            flex: 1 0 0;
+            display: flex;
+            overflow: hidden;
+        }
+
+        #left-container {
+            position: relative;
+            width: 200px;
+            background-color: #ccc;
+            padding: 40px;
+        }
+
+        #left-container::after {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            content: '物料区';
+            font-size: 30px;
+            writing-mode: vertical-rl;
+            letter-spacing: 1em;
+            opacity: 0.6;
+            z-index: 0;
+            pointer-events: none;
+
+        }
+
+        #right-container {
+            flex: 1 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #right-container::after {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            content: '内容区';
+            font-size: 30px;
+            letter-spacing: 1em;
+            opacity: 0.3;
+            z-index: 0;
+            pointer-events: none;
+
+        }
+
+
+        .draggable-item {
+            width: 20px;
+            height: 20px;
+            background-color: skyblue;
+            border-radius: 25%;
+            z-index: 1;
+        }
+
+        .dropped-item {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: skyblue;
+            border-radius: 25%;
+            cursor: move;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="top">
+        <div id="left-container">
+            <div class="draggable-item" draggable="true" data-icon="camera"></div>
+        </div>
+        <div id="right-container"></div>
+    </div>
+
+    <script>
+        // 获取左右容器和所有可拖拽的物料
+        const leftContainer = document.getElementById("left-container");
+        const rightContainer = document.getElementById("right-container");
+        const draggableItems = document.querySelectorAll(".draggable-item");
+
+        const dragover = (e) => {
+            // 阻止默认行为，允许拖放
+            e.preventDefault();
+        };
+
+        const drop = (e) => {
+            // 阻止默认行为，允许拖放
+            e.preventDefault();
+
+            // 获取拖拽数据
+            const data = JSON.parse(e.dataTransfer.getData("text/plain"));
+
+            // 创建一个新的元素，将拖拽数据显示在其中
+            const newItem = document.createElement("div");
+            newItem.classList.add("dropped-item");
+            newItem.style.top = e.offsetY - data.offsetY + "px";
+            newItem.style.left = e.offsetX - data.offsetX + "px";
+
+            newItem.addEventListener("mousedown", (e) => {
+                e.preventDefault();
+                e.stopPropagation()
+                // 鼠标按下时 记录点击的位置
+                let disx = e.pageX - newItem.offsetLeft;
+                let disy = e.pageY - newItem.offsetTop;
+
+                // 鼠标移动
+                document.onmousemove = function (e) {
+                    let x = e.pageX - disx;
+                    let y = e.pageY - disy;
+
+                    let maxX =
+                        parseInt(window.getComputedStyle(rightContainer).width) -
+                        parseInt(window.getComputedStyle(newItem).width);
+                    let maxY =
+                        parseInt(window.getComputedStyle(rightContainer).height) -
+                        parseInt(window.getComputedStyle(newItem).height);
+
+                    if (x < 0) {
+                        x = 0;
+                    } else if (x >= maxX) {
+                        x = maxX;
+                    }
+
+                    if (y < 0) {
+                        y = 0;
+                    } else if (y > maxY) {
+                        y = maxY;
+                    }
+
+                    newItem.style.left = x + "px";
+                    newItem.style.top = y + "px";
+                };
+                document.onmouseup = function () {
+                    document.onmousemove = document.onmouseup = null;
+                };
+            });
+
+            // 将新元素添加到右侧容器中
+            rightContainer.appendChild(newItem);
+        };
+
+        // 为可拖拽的物料添加拖放事件处理程序
+        draggableItems.forEach((item) => {
+            item.addEventListener("dragstart", (e) => {
+                // 设置拖拽数据
+                e.dataTransfer.setData(
+                    "text/plain",
+                    JSON.stringify({
+                        offsetX: e.offsetX,
+                        offsetY: e.offsetY,
+                        icon: e.target.dataset.icon,
+                    })
+                );
+
+                // 为右侧容器添加拖放事件处理程序
+                rightContainer.addEventListener("dragover", dragover);
+                rightContainer.addEventListener("drop", drop);
+            });
+
+            item.addEventListener("dragend", (e) => {
+                // 为右侧容器添加拖放事件处理程序
+                rightContainer.removeEventListener("dragover", dragover);
+                rightContainer.removeEventListener("drop", drop);
+            });
+        });
+    </script>
+</body>
+
+</html>
