@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "outDir": "./dist"
+  },
+  "include": [
+    "./*.ts",
+    "./types/*.d.ts" // 添加这一行
+  ]
+}
