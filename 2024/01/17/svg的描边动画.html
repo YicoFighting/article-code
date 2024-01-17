@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>svg的描边动画</title>
+    <style>
+        path {
+            /* 移除填充颜色 */
+            fill: none;
+            /* 设置线的颜色 */
+            stroke: skyblue;
+
+        }
+
+        .icon {
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+        }
+
+        .p {
+            stroke-dasharray: var(--l);
+            stroke-dashoffset: var(--l);
+            animation: stroke 1s forwards;
+        }
+
+        @keyframes stroke {
+            to {
+                /* 动画结束时，偏移量为0 */
+                stroke-dashoffset: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <svg class="icon" x="0px" y="0px" viewBox="0 0 90 85">
+        <g id="pathGroup">
+            <path class="p"
+                d="M23.87,81.36V56.69c0-0.11-0.05-0.21-0.14-0.28l-7.64-5.72c-0.11-0.08-0.25-0.09-0.37-0.03L3.18,57.42
+                    C3.07,57.48,3,57.6,3,57.73v23.29c0,0.19,0.15,0.34,0.34,0.34h83.54c0.19,0,0.34-0.15,0.34-0.34V54.99c0-0.12-0.06-0.23-0.17-0.3
+                    l-10.05-6.01c-0.1-0.06-0.17-0.17-0.17-0.3V36c0-0.11-0.05-0.21-0.14-0.28L60.97,24.18c-0.12-0.08-0.27-0.09-0.39-0.01L41.64,36.61
+                    c-0.23,0.15-0.53-0.01-0.53-0.29l0.15-31.14c0-0.3-0.36-0.46-0.58-0.25l-16.7,16.22c-0.07,0.06-0.1,0.15-0.1,0.25v38.11">
+            </path>
+
+            <path class="p" d="M41.26,5.18l12.72,10.11c0.08,0.07,0.12,0.16,0.12,0.26v65.81"></path>
+
+            <path class="p"
+                d="M54.05,45.57L38.04,51.1c-0.14,0.05-0.23,0.18-0.23,0.33v5.05c0,0.23,0.22,0.39,0.44,0.33l15.8-4.49">
+            </path>
+
+            <path class="p"
+                d="M54.05,61.75L38.08,65.3c-0.16,0.03-0.27,0.17-0.27,0.34v5.71c0,0.21,0.19,0.37,0.4,0.34l15.84-2.57">
+            </path>
+        </g>
+    </svg>
+    <script>
+        // 选择所有的路径元素
+        const paths = document.querySelectorAll('.icon .p')
+        paths.forEach(path => {
+            // 获取每个路径的长度
+            const len = path.getTotalLength();
+            // 将路径的长度设置为CSS变量
+            path.style.setProperty('--l', len)
+        })
+
+        // 定义一个函数来重新开始动画
+        const restartAnimation = () => {
+            // 获取包含所有路径的组
+            const pathGroup = document.getElementById('pathGroup');
+            // 克隆这个组
+            const cloneGroup = pathGroup.cloneNode(true);
+            // 用克隆的组替换原始的组，这将重新开始动画
+            pathGroup.parentNode.replaceChild(cloneGroup, pathGroup);
+        }
+
+        // 获取SVG图标
+        const icon = document.querySelector('.icon');
+        // 当鼠标悬停在图标上时，重新开始动画
+        icon.addEventListener('mouseover', restartAnimation);
+    </script>
+</body>
+
+</html>
